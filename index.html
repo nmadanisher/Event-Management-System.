@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gather – Event Management System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;700&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="#" aria-label="Gather home">Gather</a>
+  <nav>
+    <button class="tab is-active" data-view="events">Events</button>
+    <button class="tab admin-only" data-view="dashboard" hidden>Dashboard</button>
+    <button id="adminToggle" class="btn btn-ghost">Admin login</button>
+  </nav>
+</header>
+
+<main>
+  <!-- EVENTS VIEW -->
+  <section id="view-events" class="view">
+    <div class="hero">
+      <h1>Find an event.<br>Reserve your seat.</h1>
+      <p>Workshops, concerts, meetups and more. Register in under a minute.</p>
+    </div>
+
+    <div class="filters">
+      <input id="search" type="search" placeholder="Search by title or venue" aria-label="Search events">
+      <select id="categoryFilter" aria-label="Filter by category"></select>
+      <select id="sortBy" aria-label="Sort events">
+        <option value="date-asc">Soonest first</option>
+        <option value="date-desc">Latest first</option>
+        <option value="price-asc">Price: low to high</option>
+      </select>
+      <label class="check"><input id="showPast" type="checkbox"> Show past events</label>
+      <button id="addEventBtn" class="btn btn-primary admin-only" hidden>New event</button>
+    </div>
+
+    <div id="eventGrid" class="grid"></div>
+    <p id="emptyState" class="empty" hidden>No events match your search. Clear the filters to see everything.</p>
+  </section>
+
+  <!-- DASHBOARD VIEW -->
+  <section id="view-dashboard" class="view" hidden>
+    <h2>Dashboard</h2>
+    <div id="stats" class="stats"></div>
+
+    <div class="table-head">
+      <h3>All registrations</h3>
+      <button id="exportAll" class="btn btn-ghost">Export CSV</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Name</th><th>Email</th><th>Event</th><th>Seats</th><th>Registered on</th><th></th></tr>
+        </thead>
+        <tbody id="regTable"></tbody>
+      </table>
+    </div>
+    <p id="noRegs" class="empty" hidden>No registrations yet.</p>
+  </section>
+</main>
+
+<!-- EVENT FORM (admin) -->
+<dialog id="eventDialog">
+  <form id="eventForm" method="dialog">
+    <h3 id="eventDialogTitle">New event</h3>
+    <input type="hidden" name="id">
+    <label>Title <input name="title" required maxlength="80"></label>
+    <div class="row">
+      <label>Category
+        <select name="category" required></select>
+      </label>
+      <label>Price (₹, 0 = free) <input name="price" type="number" min="0" value="0" required></label>
+    </div>
+    <div class="row">
+      <label>Date <input name="date" type="date" required></label>
+      <label>Time <input name="time" type="time" required></label>
+    </div>
+    <div class="row">
+      <label>Venue <input name="venue" required maxlength="80"></label>
+      <label>Capacity <input name="capacity" type="number" min="1" value="50" required></label>
+    </div>
+    <label>Description <textarea name="description" rows="3" maxlength="400"></textarea></label>
+    <div class="actions">
+      <button type="button" class="btn btn-ghost" data-close>Cancel</button>
+      <button type="submit" class="btn btn-primary">Save event</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- REGISTER FORM -->
+<dialog id="regDialog">
+  <form id="regForm" method="dialog">
+    <h3 id="regTitle">Register</h3>
+    <p id="regInfo" class="muted"></p>
+    <input type="hidden" name="eventId">
+    <label>Full name <input name="name" required maxlength="60"></label>
+    <div class="row">
+      <label>Email <input name="email" type="email" required></label>
+      <label>Phone <input name="phone" type="tel" pattern="[0-9+ \-]{7,15}" required></label>
+    </div>
+    <label>Seats <input name="seats" type="number" min="1" max="10" value="1" required></label>
+    <p id="regTotal" class="total"></p>
+    <div class="actions">
+      <button type="button" class="btn btn-ghost" data-close>Cancel</button>
+      <button type="submit" class="btn btn-primary">Confirm registration</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- ATTENDEES (admin) -->
+<dialog id="attendeesDialog">
+  <div class="dialog-body">
+    <h3 id="attendeesTitle">Attendees</h3>
+    <div id="attendeesList"></div>
+    <div class="actions">
+      <button id="exportEvent" class="btn btn-ghost">Export CSV</button>
+      <button class="btn btn-primary" data-close>Close</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- ADMIN LOGIN -->
+<dialog id="loginDialog">
+  <form id="loginForm" method="dialog">
+    <h3>Admin login</h3>
+    <label>Password <input name="password" type="password" required autocomplete="off"></label>
+    <p id="loginError" class="error" hidden>Wrong password. Try again.</p>
+    <div class="actions">
+      <button type="button" class="btn btn-ghost" data-close>Cancel</button>
+      <button type="submit" class="btn btn-primary">Log in</button>
+    </div>
+  </form>
+</dialog>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
